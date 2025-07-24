@@ -46,7 +46,7 @@ export default function Contact() {
     e.preventDefault();
     console.log('Form submitted:', formData);
     try {
-      const res = await axios.post('http://localhost:3000/api/contacts', formData);
+      const res = await axios.post("http://localhost:3000/api/contacts", formData);
       console.log('API response:', res.data);
       alert('Thank you! Your message has been received.');
       navigate('/');

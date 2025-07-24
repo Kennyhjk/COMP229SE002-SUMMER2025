@@ -9,6 +9,9 @@ router.post('/signup', authCtrl.signUp);
 // POST /api/auth/signin
 router.post('/signin', authCtrl.signIn);
 
+// GET /api/auth/signout
+router.get('/signout', authCtrl.signOut);
+
 // GET /api/auth/me/:userId 
 router.get(
   '/me/:userId',

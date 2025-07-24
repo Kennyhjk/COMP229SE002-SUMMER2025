@@ -2,8 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user.model.js');
 
-
-//Sign-up
+// Sign-up
 exports.signUp = async (req, res) => {
   try {
     const user = new User(req.body);
@@ -19,7 +18,7 @@ exports.signUp = async (req, res) => {
   }
 };
 
- //Sign-in
+// Sign-in
 exports.signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -42,7 +41,7 @@ exports.signIn = async (req, res) => {
   }
 };
 
- //Token verification middleware (Require Signin)
+// Require Signin middleware
 exports.requireSignin = (req, res, next) => {
   const authHeader = req.headers.authorization || '';
   const token = authHeader.split(' ')[1];
@@ -50,12 +49,12 @@ exports.requireSignin = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) return res.status(401).json({ error: 'Invalid token' });
-    req.auth = decoded; // Stores user ID in req.auth.id
+    req.auth = decoded; // decoded.id = user._id
     next();
   });
 };
 
- //Authorization check middleware (Has Authorization)
+// Has Authorization middleware
 exports.hasAuthorization = (req, res, next) => {
   const authorized =
     req.profile &&
@@ -65,4 +64,10 @@ exports.hasAuthorization = (req, res, next) => {
     return res.status(403).json({ error: 'Access denied' });
   }
   next();
+};
+
+// Sign-out
+exports.signOut = (req, res) => {
+  res.clearCookie("token"); 
+  return res.status(200).json({ message: "Signed out successfully" });
 };

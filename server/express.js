@@ -6,18 +6,24 @@ import cors from "cors";
 import helmet from "helmet";
 import userRoutes from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import contactRoutes from "./routes/contact.routes.js";
 
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use("/", userRoutes);
 app.use("/", authRoutes);
+app.use("/api/contact", contactRoutes);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(compress());
 app.use(helmet());
 app.use(cors());
+
 app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
     res.status(401).json({ error: err.name + ": " + err.message });

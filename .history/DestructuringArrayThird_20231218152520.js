@@ -1,1 +1,0 @@
-DestructuringArrayFirst.js
