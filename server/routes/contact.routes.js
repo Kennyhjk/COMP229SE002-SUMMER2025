@@ -1,11 +1,13 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
 const ctrl = require('../controllers/contact.controller');
+const { requireSignin, isAdmin } = require('../controllers/auth.controller');
 
-router.get('/',      ctrl.getAll);
-router.get('/:id',   ctrl.getById);
-router.post('/',     ctrl.create);
-router.put('/:id',   ctrl.update);
-router.delete('/:id',ctrl.remove);
-router.delete('/',   ctrl.removeAll);
+router.post('/', ctrl.create);
+
+router.get('/', requireSignin, isAdmin, ctrl.findAll);
+router.get('/:id', requireSignin, isAdmin, ctrl.findOne);
+router.delete('/:id', requireSignin, isAdmin, ctrl.deleteOne);
+router.delete('/', requireSignin, isAdmin, ctrl.deleteAll);
 
 module.exports = router;

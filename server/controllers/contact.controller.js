@@ -1,11 +1,11 @@
 const Contact = require('../models/contact.model.js');
 
-exports.getAll = async (req, res) => {
+exports.findAll = async (req, res) => {
   const data = await Contact.find();
   res.json(data);
 };
 
-exports.getById = async (req, res) => {
+exports.findOne = async (req, res) => {
   const data = await Contact.findById(req.params.id);
   if (!data) return res.status(404).json({ message: 'Not found' });
   res.json(data);
@@ -27,12 +27,12 @@ exports.update = async (req, res) => {
   res.json(updated);
 };
 
-exports.remove = async (req, res) => {
+exports.deleteOne = async (req, res) => {
   await Contact.findByIdAndDelete(req.params.id);
   res.status(204).end();
 };
 
-exports.removeAll = async (req, res) => {
+exports.deleteAll = async (req, res) => {
   await Contact.deleteMany();
   res.status(204).end();
 };
