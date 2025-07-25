@@ -1,7 +1,21 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
+import { useAuth } from '../context/AuthContext'; 
 
 export default function Navbar() {
+  const { user, logout } = useAuth(); 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/signin');
+  };
+
+  const linkStyle = {
+    color: '#fff',
+    textDecoration: 'none'
+  };
+
   return (
     <nav style={{
       backgroundColor: '#111',
@@ -27,11 +41,36 @@ export default function Navbar() {
         }}
       />
 
-      <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>Home</Link>
-      <Link to="/about" style={{ color: '#fff', textDecoration: 'none' }}>About</Link>
-      <Link to="/projects" style={{ color: '#fff', textDecoration: 'none' }}>Projects</Link>
-      <Link to="/services" style={{ color: '#fff', textDecoration: 'none' }}>Services</Link>
-      <Link to="/contact" style={{ color: '#fff', textDecoration: 'none' }}>Contact</Link>
+      <Link to="/" style={linkStyle}>Home</Link>
+      <Link to="/about" style={linkStyle}>About</Link>
+      <Link to="/projects" style={linkStyle}>Projects</Link>
+      <Link to="/services" style={linkStyle}>Services</Link>
+      <Link to="/contact" style={linkStyle}>Contact</Link>
+
+      {/* 로그인 상태에 따라 메뉴 전환 */}
+      {user ? (
+        <>
+          <Link to="/profile" style={linkStyle}>My Profile</Link>
+          <button
+            onClick={handleLogout}
+            style={{
+              backgroundColor: '#eee',
+              color: '#111',
+              border: 'none',
+              padding: '6px 12px',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Log Out
+          </button>
+        </>
+      ) : (
+        <>
+          <Link to="/signin" style={linkStyle}>Sign In</Link>
+          <Link to="/signup" style={linkStyle}>Sign Up</Link>
+        </>
+      )}
     </nav>
   );
 }

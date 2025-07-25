@@ -1,38 +1,43 @@
-import { createContext, useState, useEffect, useContext } from 'react'
+import { createContext, useState, useEffect, useContext } from 'react';
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem('jwt')
-    if (stored) {
+    const storedToken = localStorage.getItem('jwt');
+    if (storedToken) {
       try {
-        const decoded = JSON.parse(atob(stored.split('.')[1])) // JWT decode
-        setUser({ id: decoded.id, role: decoded.role })
+        const decoded = JSON.parse(atob(storedToken.split('.')[1])); // JWT decode
+        setUser({ id: decoded.id, role: decoded.role });
       } catch (err) {
-        console.error('Token decoding failed:', err)
+        console.error('Token decoding failed:', err);
+        localStorage.removeItem('jwt'); // 잘못된 토큰 제거
       }
     }
-  }, [])
+  }, []);
 
   const login = (token) => {
-    localStorage.setItem('jwt', token)
-    const decoded = JSON.parse(atob(token.split('.')[1]))
-    setUser({ id: decoded.id, role: decoded.role })
-  }
+    localStorage.setItem('jwt', token);
+    try {
+      const decoded = JSON.parse(atob(token.split('.')[1]));
+      setUser({ id: decoded.id, role: decoded.role });
+    } catch (err) {
+      console.error('Login decoding error:', err);
+    }
+  };
 
   const logout = () => {
-    localStorage.removeItem('jwt')
-    setUser(null)
-  }
+    localStorage.removeItem('jwt');
+    setUser(null);
+  };
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext);
