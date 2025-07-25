@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // ✅ 추가
+import { useAuth } from '../context/AuthContext';
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // ✅ context 사용
+  const { login } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
 
   const inputStyle = {
@@ -54,9 +54,9 @@ export default function SignIn() {
       const res = await axios.post('http://localhost:3000/api/auth/signin', formData);
       const token = res.data.token;
 
-      login(token); // ✅ 로그인 상태 저장
+      login(token); // login with the token
       alert('Login successful!');
-      navigate('/profile'); // ✅ 프로필 페이지로 이동
+      navigate('/profile'); // navigate to profile page
     } catch (err) {
       console.error('Login failed:', err);
       alert('Invalid credentials');
