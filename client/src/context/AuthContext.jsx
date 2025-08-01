@@ -6,20 +6,20 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('jwt');
+    const storedToken = sessionStorage.getItem('jwt'); 
     if (storedToken) {
       try {
-        const decoded = JSON.parse(atob(storedToken.split('.')[1])); // JWT decode
+        const decoded = JSON.parse(atob(storedToken.split('.')[1]));
         setUser({ id: decoded.id, role: decoded.role });
       } catch (err) {
         console.error('Token decoding failed:', err);
-        localStorage.removeItem('jwt'); // 잘못된 토큰 제거
+        sessionStorage.removeItem('jwt'); 
       }
     }
   }, []);
 
   const login = (token) => {
-    localStorage.setItem('jwt', token);
+    sessionStorage.setItem('jwt', token); 
     try {
       const decoded = JSON.parse(atob(token.split('.')[1]));
       setUser({ id: decoded.id, role: decoded.role });
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('jwt');
+    sessionStorage.removeItem('jwt'); 
     setUser(null);
   };
 

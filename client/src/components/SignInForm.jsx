@@ -1,36 +1,53 @@
-import React, { useState } from 'react'
-import axios from 'axios'
-import { useAuth } from '../context/AuthContext' 
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 const SignInForm = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' })
-  const [message, setMessage] = useState('')
-  const { login } = useAuth()  
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [message, setMessage] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async e => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const res = await axios.post('/api/auth/signin', formData)
-      login(res.data.token) 
-      setMessage('Login successful!')
+      const res = await axios.post('/api/auth/signin', formData);
+      login(res.data.token);
+      setMessage('Login successful!');
+      navigate('/profile');  
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Login failed')
+      setMessage(err.response?.data?.error || 'Login failed');
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Sign In</h2>
-      <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-      <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+        required
+      />
       <button type="submit">Sign In</button>
-      <p>{message}</p>
+      {message && <p>{message}</p>}
     </form>
-  )
-}
+  );
+};
 
-export default SignInForm
+export default SignInForm;
