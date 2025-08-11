@@ -1,43 +1,51 @@
-// express.js (CJS 최종본)
+// functions/server-app.js  (CJS, listen 없음)
 require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
 const helmet = require('helmet');
+const mongoose = require('mongoose');
 
-// ⛳ 라우터(CJS)
-const userRoutes = require('./routes/user.routes.js');
-const authRoutes = require('./routes/auth.routes.js');
-const contactRoutes = require('./routes/contact.routes.js');
+// 복사해온 경로 기준
+const userRoutes = require('./server/routes/user.routes.js');
+const authRoutes = require('./server/routes/auth.routes.js');
+const contactRoutes = require('./server/routes/contact.routes.js');
 
 const app = express();
 
-/** Core middlewares (routes보다 먼저) */
+// (선택) MongoDB 연결
+if (process.env.MONGODB_URI) {
+  mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('Mongo connected'))
+    .catch((e) => console.error('Mongo error', e));
+}
+
+// 미들웨어
 app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/** CORS (로컬 + 배포 도메인 허용) */
+// CORS (로컬 + Hosting)
 app.use(cors({
   origin: [
-    'http://localhost:5173',                       // Vite dev
-    'https://my-awesome-project-id-5c03c.web.app', // Firebase Hosting
+    'http://localhost:5173',
+    'https://my-awesome-project-id-5c03c.web.app',
   ],
-  credentials: true, // 쿠키 인증이면 필요
+  credentials: true,
 }));
 
-/** Health check */
+// 헬스
 app.get('/health', (_, res) => res.send('ok'));
 
-/** Routes — 프론트는 /api/... 로 호출 */
+// 라우트 (최종: /api/...)
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
 
-/** Error handler */
+// 에러 핸들러
 app.use((err, req, res, next) => {
   if (err && err.name === 'UnauthorizedError') {
     return res.status(401).json({ error: `${err.name}: ${err.message}` });
@@ -49,6 +57,4 @@ app.use((err, req, res, next) => {
   next();
 });
 
-/** Start server */
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Server on', PORT));
+module.exports = app;
